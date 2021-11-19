@@ -27,15 +27,15 @@ void setup() {
  } 
 
 void loop() {
-    uint8_t Irms0 = emon0.calcIrms(1800);      // Calculate Irms0 only 
-    uint8_t Irms1 = emon1.calcIrms(1800);      // Calculate Irms1 only   
-    uint8_t Irms2 = emon2.calcIrms(1800);      // Calculate Irms2 only   
-    uint8_t Irms3 = emon3.calcIrms(1800);      // Calculate Irms3 only   
-    uint8_t Irms4 = emon4.calcIrms(1800);      // Calculate Irms4 only   
-    uint8_t Irms5 = emon5.calcIrms(1800);      // Calculate Irms5 only   
-    uint8_t Irms6 = emon6.calcIrms(1800);      // Calculate Irms6 only   
-    uint8_t Irms7 = emon7.calcIrms(1800);      // Calculate Irms7 only   
-    uint8_t Irms8 = emon8.calcIrms(1800);      // Calculate Irms8 only      
+    float Irms0 = emon0.calcIrms(1800);      // Calculate Irms0 only 
+    float Irms1 = emon1.calcIrms(1800);      // Calculate Irms1 only   
+    float Irms2 = emon2.calcIrms(1800);      // Calculate Irms2 only   
+    float Irms3 = emon3.calcIrms(1800);      // Calculate Irms3 only   
+    float Irms4 = emon4.calcIrms(1800);      // Calculate Irms4 only   
+    float Irms5 = emon5.calcIrms(1800);      // Calculate Irms5 only   
+    float Irms6 = emon6.calcIrms(1800);      // Calculate Irms6 only   
+    float Irms7 = emon7.calcIrms(1800);      // Calculate Irms7 only   
+    float Irms8 = emon8.calcIrms(1800);      // Calculate Irms8 only      
 
     Serial.print("|Irms0=");Serial.print(Irms0);// Irms0  
     Serial.print("|Irms1=");Serial.print(Irms1);// Irms1 
