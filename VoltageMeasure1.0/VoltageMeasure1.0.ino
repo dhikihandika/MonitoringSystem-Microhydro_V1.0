@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 float R1 = 4700.0;                                                                  // Value resistor 1 in voltage divider circuit                                     
-float R2 = 1800.0;                                                                  // Value resistor 2 in voltage divider circuit 
+float R2 = 1200.0;                                                                  // Value resistor 2 in voltage divider circuit 
 float ACVoltageRefference = 220.0;                                                  // AC Voltage refference for data measurement 
 float inputVoltageRefference = 12.4;                                                // Input Voltage refference for data measurement (voltage output from diode bridge)
 
