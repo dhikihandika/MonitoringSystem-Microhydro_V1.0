@@ -3,7 +3,8 @@ unsigned long sekarang = 0; //Variabel untuk waktu akhir
 unsigned long waktu = 0; //Variabel untuk waktu akhir
 unsigned long periode = 0; //Variabel selisih waktu
 bool pulsa_baru = false; //Variabel tambahan untuk kondisi dengan default false
-float rpm = 0; //Deklarasi variabel RPM  
+float rpm = 0; //Deklarasi variabel RPM
+unsigned long rpm2 = 0; //Variabel untuk menyimpan besar selisih waktu untuk membuat rpm bernilai 0 ketika putaran berhenti
 void setup() { //fungsi akan berjalan 1 kali
   // put your setup code here, to run once:
   Serial.begin(9600); //Syntax untuk serial print monitor
@@ -31,6 +32,11 @@ void loop() { //fungsi pengulangan terus menerus
     pulsa_baru = false; //Variabel untuk mengembalikkan nilai variabel pulsa_baru ke default
   }
   
+  if(rpm2 >= 60000) //Decision saat nilai selisih waktu atau rpm2 >= 600000, maka akan menjalankan program yaitu nilai rpm akan dikembalikan ke 0 rpm.
+  {
+   rpm = 0; //Pengembalian nilai rpm ke nilai default yaitu 0
+    
+  }
 }
 
 void pulsa(){ //fungsi ISR, fungsi ini akan berjalan ketika interrupt diaktifkan yang mendapat trigger dari sensor
