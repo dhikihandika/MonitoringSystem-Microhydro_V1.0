@@ -14,7 +14,7 @@ Adafruit_BME280 bme;                                                      // Acc
 void setup() {
   Serial.begin(9600);                                                     // Serial initialization
  
-  if (!bme.begin(0x77)) {
+  if (!bme.begin(0x76)) {
     Serial.println("BME280 sensor can't detceted, check your address or circuit!");
     while (1);
   } else {
