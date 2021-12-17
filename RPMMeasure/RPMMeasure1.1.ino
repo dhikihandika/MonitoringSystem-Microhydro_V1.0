@@ -5,8 +5,6 @@ bool sensor_read = false;         // status initiation of activation sensor read
 uint32_t count = 0;               // counting start from 0
 int SensorNow;                    // initiation of current sensor reading
 
-
-
 //===============================================Sensor, LED, and Counting Reading====================================================
 void active(){
   if(SensorNow == LOW){                         // if current sensor NOW
