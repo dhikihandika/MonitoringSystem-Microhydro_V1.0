@@ -2,8 +2,8 @@
 //-------------------------------                                     Current Sensor Measure Module                                      ----------------------------//
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
-// #define DEBUG
-#define RELEASE
+#define DEBUG
+// #define RELEASE
 
 #include "EmonLib.h"                                                                // Include Emon Library 
 EnergyMonitor emon0;                                                                // Create an instance emon0
@@ -28,7 +28,7 @@ float ACVoltage0;float ACVoltage1; float ACVoltage2;                            
 
 float Wpress;                                                                       // Define variable Water Pressure of Turbine
 
-uint32_t oldtime;                                                                   // Millis Oldtime
+int64_t oldtime;                                                                    // Millis Oldtime
 
 void setup() {
     oldtime = millis();
@@ -83,6 +83,9 @@ void loop() {
         ACVoltage2 = inputVoltage2 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
         #endif
 
+        // water pressure calculation
+
+        // output data for DEBUG and correction
         #ifdef DEBUG
         Serial.print("|Irms0=");Serial.print(Irms0);                                // Irms0  
         Serial.print("|Irms1=");Serial.print(Irms1);                                // Irms1 
@@ -97,20 +100,21 @@ void loop() {
         Serial.print("|adc0=");Serial.print(adc0);                                
         Serial.print("|adcVoltage0=");Serial.print(voltage0);
         Serial.print("|inputVoltage0=");Serial.print(inputVoltage0);
-        Serial.print("|ACVoltage0=");Serial.print(ACVoltage0);                      
+        Serial.print("|ACVoltage0=");Serial.println(ACVoltage0);                      
         Serial.print("|adc1=");Serial.print(adc1);
         Serial.print("|adcVoltage1=");Serial.print(voltage1);
         Serial.print("|inputVoltage1=");Serial.print(inputVoltage1);
-        Serial.print("|ACVoltage1=");Serial.print(ACVoltage1);
+        Serial.print("|ACVoltage1=");Serial.println(ACVoltage1);
         Serial.print("|adc2=");Serial.print(adc2);
         Serial.print("|adcVoltage2=");Serial.print(voltage2);
         Serial.print("|inputVoltage2=");Serial.print(inputVoltage2);
         Serial.print("|ACVoltage2=");Serial.println(ACVoltage2);
-        Serial.print("----------------------------------------------------------------------------------------");
+        Serial.println("----------------------------------------------------------------------------------------");
         Serial.print("WaterPressure");Serial.println(Wpress);
         Serial.println("----------------------------------------------------------------------------------------");
         #endif
 
+        // output data send to Rpi
         #ifdef RELEASE
         Serial1.print("$");
         Serial1.print(Irms0);Serial1.print(";");
@@ -128,5 +132,9 @@ void loop() {
         Serial1.print(Wpress);Serial1.print(";");
         Serial1.print("\n");
         #endif
+    } else {
+        if((millis()-oldtime)<=0){
+            oldtime=0;                                                              // Reset variable oldtime to zero;              
+        }
     }
 }
