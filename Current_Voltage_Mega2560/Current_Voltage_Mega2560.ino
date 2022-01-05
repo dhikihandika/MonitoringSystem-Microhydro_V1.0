@@ -61,27 +61,21 @@ void loop() {
 
         // voltage0 measure
         adc0 = analogRead(A9);                                                      // Read adc
-        #ifdef DEBUG
         voltage0 = adc0 * (5.0 / 1023.0);                                           // Formula read voltage from adc (voltage = adc * Vreff/1023)
         inputVoltage0 = voltage0 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
         ACVoltage0 = inputVoltage0 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
-        #endif
 
         // voltage1 measure
         adc1 = analogRead(A10);                                                     // Read adc
-        #ifdef DEBUG
         voltage1 = adc1 * (5.0 / 1023.0);                                           // Formula read voltage from adc (voltage = adc * Vreff/1023)
         inputVoltage1 = voltage1 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
         ACVoltage1 = inputVoltage1 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
-        #endif
 
         // voltage2 measure
         adc2 = analogRead(A11);                                                     // Read adc
-        #ifdef DEBUG
         voltage2 = adc2 * (5.0 / 1023.0);                                           // Formula read voltage from adc (voltage = adc * Vreff/1023)
         inputVoltage2 = voltage2 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
         ACVoltage2 = inputVoltage2 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
-        #endif
 
         // water pressure calculation
 
@@ -110,7 +104,7 @@ void loop() {
         Serial.print("|inputVoltage2=");Serial.print(inputVoltage2);
         Serial.print("|ACVoltage2=");Serial.println(ACVoltage2);
         Serial.println("----------------------------------------------------------------------------------------");
-        Serial.print("WaterPressure");Serial.println(Wpress);
+        Serial.print("WaterPressure=");Serial.println(Wpress);
         Serial.println("----------------------------------------------------------------------------------------");
         #endif
 
