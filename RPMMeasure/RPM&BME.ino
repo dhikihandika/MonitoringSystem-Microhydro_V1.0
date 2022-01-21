@@ -20,7 +20,7 @@ unsigned long rpm2=0;                                                     //Vari
 void setup() {
   Serial.begin(9600);                                                     //Syntax untuk serial print monitor
   pinMode(sensor, INPUT_PULLUP);                                          //Setting untuk menjadikan pin 3 sensor sebagai input pullup  
-  attachInterrupt(digitalPinToInterrupt(sensor), pulsa, CHANGE);          /*Setting interrupt. "sensor" sebagai input/trigger, "pulsa" sebagai fungsi ISR yang akan dieksekusi, 
+  attachInterrupt(digitalPinToInterrupt(sensor), trig, CHANGE);          /*Setting interrupt. "sensor" sebagai input/trigger, "pulsa" sebagai fungsi ISR yang akan dieksekusi, 
                                                                           * "CHANGE" sebagai mode dari interrupt yang artinya 
                                                                           * untuk mentrigger ISR ketika kondisi dari LOW-HIGH dan HIGH-LOW 
                                                                           * 
@@ -89,7 +89,7 @@ Serial.println(var_altit);                                                //Mena
 
 }
 
-void pulsa()                                                              //Fungsi ISR, fungsi ini akan berjalan ketika interrupt diaktifkan yang mendapat trigger dari sensor
+void trig()                                                              //Fungsi ISR, fungsi ini akan berjalan ketika interrupt diaktifkan yang mendapat trigger dari sensor
 {
   if(digitalRead(sensor) ==HIGH)                                          //Pengkondisian ketika pin sensor HIGH/tidak mendeteksi reflektor maka akan menjalankan program didalam fungsi
     {

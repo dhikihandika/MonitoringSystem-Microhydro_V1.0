@@ -2,8 +2,14 @@
 //-------------------------------                                     Current Sensor Measure Module                                      ----------------------------//
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
-#define DEBUG
-// #define RELEASE
+// #define DEBUG
+#define RELEASE
+
+#define AvgSize 50
+uint8_t index0 = 0;uint8_t index1 = 0;uint8_t index2 = 0;
+float sum0;float sum1;float sum2;
+float reading0[AvgSize];float reading1[AvgSize];float reading2[AvgSize];
+float MvAvg0;float MvAvg1;float MvAvg2;
 
 #include "EmonLib.h"                                                                // Include Emon Library 
 EnergyMonitor emon0;                                                                // Create an instance emon0
@@ -25,8 +31,16 @@ float adc0;float adc1;float adc2;                                               
 float voltage0;float voltage1;float voltage2;                                       // Define variable voltage 0, 1, & 2 from adc (voltage = adc * Vreff/1023)
 float inputVoltage0;float inputVoltage1;float inputVoltage2;                        // Define variable voltage divider 0, 1, & 2 - fromula (Vout = R2/(R1+R2)*Vin)
 float ACVoltage0;float ACVoltage1; float ACVoltage2;                                // Define varibale ACVoltage 0, 1, & 2 - formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
+float CallibrationFactor = 1.19;                                                    // Callibration factor
 
 float Wpress;                                                                       // Define variable Water Pressure of Turbine
+float vadc;                                                                          // Define variable Vadc 
+//float avgGrad = 0.88780097;
+//float avgGrad = 0.767796195;
+//float avgGrad = 0.753783624;
+float c = 0.5;                                                                      // Define constant
+float avgGrad = 0.846960854;                                                        // Calibration Factor
+//float avgGrad = 0.7645556;            
 
 String inputString = "";                                                            // a String to hold incoming data
 bool stringComplete = false;                                                        // whether the string is complete
@@ -53,7 +67,49 @@ void setup() {
  } 
 
 void loop() {
-    if((millis()-oldtime)>=1000){
+    // voltage0 measure
+    adc0 = analogRead(A9);                                                      // Read adc
+    voltage0 = (adc0 * 5.0) * CallibrationFactor / 1023.0;                      // Formula read voltage from adc (voltage = adc * Vreff/1023)
+    inputVoltage0 = voltage0 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
+    ACVoltage0 = inputVoltage0 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
+    // movingAvg0 method
+    sum0 = sum0 - reading0[index0];
+    reading0[index0] = ACVoltage0;
+    sum0 = sum0 + reading0[index0];
+    index0 = index0 + 1;
+    if(index0 >= AvgSize){
+       index0 = 0;
+    }
+
+    // voltage1 measure
+    adc1 = analogRead(A10);                                                     // Read adc
+    voltage1 = (adc1 * 5.0) * CallibrationFactor / 1023.0;                      // Formula read voltage from adc (voltage = adc * Vreff/1023)
+    inputVoltage1 = voltage1 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
+    ACVoltage1 = inputVoltage1 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
+    // movingAvg1 method
+    sum1 = sum1 - reading1[index1];
+    reading1[index1] = ACVoltage1;
+    sum1 = sum1 + reading1[index1];
+    index1 = index1 + 1;
+    if(index1 >= AvgSize){
+       index1 = 0;
+    }
+
+    // voltage2 measure
+    adc2 = analogRead(A11);                                                     // Read adc
+    voltage2 = (adc2 * 5.0) * CallibrationFactor / 1023.0;                      // Formula read voltage from adc (voltage = adc * Vreff/1023)
+    inputVoltage2 = voltage2 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
+    ACVoltage2 = inputVoltage2 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
+    // movingAvg2 method
+    sum2 = sum2 - reading2[index2];
+    reading2[index2] = ACVoltage2;
+    sum2 = sum2 + reading2[index2];
+    index2 = index2 + 1;
+    if(index2 >= AvgSize){
+       index2 = 0;
+    }
+
+    if((millis()-oldtime)>=10000){
         oldtime = millis();
         // current 0 - 8 measure
         float Irms0 = emon0.calcIrms(1800);                                         // Calculate Irms0 only 
@@ -66,26 +122,17 @@ void loop() {
         float Irms7 = emon7.calcIrms(1800);                                         // Calculate Irms7 only   
         float Irms8 = emon8.calcIrms(1800);                                         // Calculate Irms8 only      
 
-        // voltage0 measure
-        adc0 = analogRead(A9);                                                      // Read adc
-        voltage0 = adc0 * (5.0 / 1023.0);                                           // Formula read voltage from adc (voltage = adc * Vreff/1023)
-        inputVoltage0 = voltage0 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
-        ACVoltage0 = inputVoltage0 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
-
-        // voltage1 measure
-        adc1 = analogRead(A10);                                                     // Read adc
-        voltage1 = adc1 * (5.0 / 1023.0);                                           // Formula read voltage from adc (voltage = adc * Vreff/1023)
-        inputVoltage1 = voltage1 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
-        ACVoltage1 = inputVoltage1 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
-
-        // voltage2 measure
-        adc2 = analogRead(A11);                                                     // Read adc
-        voltage2 = adc2 * (5.0 / 1023.0);                                           // Formula read voltage from adc (voltage = adc * Vreff/1023)
-        inputVoltage2 = voltage2 * (R1+R2)/R2;                                      // Voltage divider fromula (Vout = R2/(R1+R2)*Vin)
-        ACVoltage2 = inputVoltage2 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
+        // voltage 0 - 2 measure MvAvg
+        MvAvg0 = sum0/AvgSize;                                                      // calculate MvAvg0 ACVoltage1
+        MvAvg1 = sum1/AvgSize;                                                      // calculate MvAvg0 ACVoltage1
+        MvAvg2 = sum2/AvgSize;                                                      // calculate MvAvg0 ACVoltage1
 
         // water pressure calculation
-        
+        vadc = (analogRead(12) * 5.00) / 1023;                                      // Read adc
+        Wpress = avgGrad * (250*(vadc / 5) - 25) + c;                                  // Formula read pressure
+        if ( Wpress < 0){                                                           // Decision pressure < 0
+            Wpress = 0;                                                             // Default pressure = 0
+        }
 
         // output data for DEBUG and correction
         #ifdef DEBUG
@@ -99,18 +146,18 @@ void loop() {
         Serial.print("|Irms7=");Serial.print(Irms7);                                // Irms7 
         Serial.print("|Irms8=");Serial.println(Irms8);                              // Irms8  
         Serial.println("----------------------------------------------------------------------------------------");
-        Serial.print("|adc0=");Serial.print(adc0);                                
-        Serial.print("|adcVoltage0=");Serial.print(voltage0);
-        Serial.print("|inputVoltage0=");Serial.print(inputVoltage0);
-        Serial.print("|ACVoltage0=");Serial.println(ACVoltage0);                      
-        Serial.print("|adc1=");Serial.print(adc1);
-        Serial.print("|adcVoltage1=");Serial.print(voltage1);
-        Serial.print("|inputVoltage1=");Serial.print(inputVoltage1);
-        Serial.print("|ACVoltage1=");Serial.println(ACVoltage1);
-        Serial.print("|adc2=");Serial.print(adc2);
-        Serial.print("|adcVoltage2=");Serial.print(voltage2);
-        Serial.print("|inputVoltage2=");Serial.print(inputVoltage2);
-        Serial.print("|ACVoltage2=");Serial.println(ACVoltage2);
+        // Serial.print("|adc0=");Serial.print(adc0);                                
+        // Serial.print("|adcVoltage0=");Serial.print(voltage0);
+        // Serial.print("|inputVoltage0=");Serial.print(inputVoltage0);
+        Serial.print("|ACVoltage0=");Serial.println(MvAvg0);                      
+        // Serial.print("|adc1=");Serial.print(adc1);
+        // Serial.print("|adcVoltage1=");Serial.print(voltage1);
+        // Serial.print("|inputVoltage1=");Serial.print(inputVoltage1);
+        Serial.print("|ACVoltage1=");Serial.println(MvAvg1);
+        // Serial.print("|adc2=");Serial.print(adc2);
+        // Serial.print("|adcVoltage2=");Serial.print(voltage2);
+        // Serial.print("|inputVoltage2=");Serial.print(inputVoltage2);
+        Serial.print("|ACVoltage2=");Serial.println(MvAvg2);
         Serial.println("----------------------------------------------------------------------------------------");
         Serial.print("WaterPressure=");Serial.println(Wpress);
         Serial.println("----------------------------------------------------------------------------------------");
@@ -128,9 +175,9 @@ void loop() {
         Serial1.print(Irms6);Serial1.print(";");
         Serial1.print(Irms7);Serial1.print(";");
         Serial1.print(Irms8);Serial1.print(";");
-        Serial1.print(adc0);Serial1.print(";");
-        Serial1.print(adc1);Serial1.print(";");
-        Serial1.print(adc2);Serial1.print(";");
+        Serial1.print(MvAvg0);Serial1.print(";");
+        Serial1.print(MvAvg1);Serial1.print(";");
+        Serial1.print(MvAvg2);Serial1.print(";");
         Serial1.print(Wpress);Serial1.print(";");
         Serial1.print("\n");
         #endif
@@ -156,10 +203,9 @@ void loop() {
             }
         }
     }
-
 }
 
-// Serial event
+// SerialEvent
 void serialEvent1() {
 while (Serial1.available()) {
 // get the new byte:

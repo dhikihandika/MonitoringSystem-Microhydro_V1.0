@@ -2,8 +2,8 @@
 //-------------------------------                                     Current Sensor Measure Module                                      ----------------------------//
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
-#define DEBUG
-// #define RELEASE
+// #define DEBUG
+#define RELEASE
 
 #include "EmonLib.h"                                                                // Include Emon Library 
 EnergyMonitor emon0;                                                                // Create an instance emon0
@@ -26,38 +26,45 @@ float voltage0;float voltage1;float voltage2;                                   
 float inputVoltage0;float inputVoltage1;float inputVoltage2;                        // Define variable voltage divider 0, 1, & 2 - fromula (Vout = R2/(R1+R2)*Vin)
 float ACVoltage0;float ACVoltage1; float ACVoltage2;                                // Define varibale ACVoltage 0, 1, & 2 - formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
 
-float Wpress;                                                                       // Define variable Water Pressure of Turbine
+float vadc                                                                          // Define variable Vadc 
+//float avgGrad = 0.88780097;
+//float avgGrad = 0.767796195;
+//float avgGrad = 0.753783624;
+float c = 0.5;                                                                      // Define constant
+float avgGrad = 0.846960854;                                                        // Calibration Factor
+//float avgGrad = 0.7645556; 
+float wpress = 22.65;                                                                       // Define variable Water Pressure of Turbine
 
 int64_t oldtime;                                                                    // Millis Oldtime
 
 void setup() {
     oldtime = millis();
-    Serial.begin(9600);                         // Serial begin initialization
-    Serial1.begin(9600);                         // Serial begin initialization
-    emon0.current(0, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon1.current(1, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon2.current(2, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon3.current(3, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon4.current(4, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon5.current(5, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon6.current(6, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon7.current(7, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
-    emon8.current(8, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    Serial.begin(9600);                                                             // Serial begin initialization
+    Serial1.begin(9600);                                                            // Serial begin initialization
+    emon0.current(0, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon1.current(1, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon2.current(2, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon3.current(3, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon4.current(4, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon5.current(5, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon6.current(6, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon7.current(7, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon8.current(8, 47);                                                           // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
  } 
 
 void loop() {
     if((millis()-oldtime)>=1000){
         oldtime = millis();
         // current 0 - 8 measure
-        float Irms0 = emon0.calcIrms(1800);      // Calculate Irms0 only 
-        float Irms1 = emon1.calcIrms(1800);      // Calculate Irms1 only   
-        float Irms2 = emon2.calcIrms(1800);      // Calculate Irms2 only   
-        float Irms3 = emon3.calcIrms(1800);      // Calculate Irms3 only   
-        float Irms4 = emon4.calcIrms(1800);      // Calculate Irms4 only   
-        float Irms5 = emon5.calcIrms(1800);      // Calculate Irms5 only   
-        float Irms6 = emon6.calcIrms(1800);      // Calculate Irms6 only   
-        float Irms7 = emon7.calcIrms(1800);      // Calculate Irms7 only   
-        float Irms8 = emon8.calcIrms(1800);      // Calculate Irms8 only      
+        float Irms0 = emon0.calcIrms(1800);                                         // Calculate Irms0 only 
+        float Irms1 = emon1.calcIrms(1800);                                         // Calculate Irms1 only   
+        float Irms2 = emon2.calcIrms(1800);                                         // Calculate Irms2 only   
+        float Irms3 = emon3.calcIrms(1800);                                         // Calculate Irms3 only   
+        float Irms4 = emon4.calcIrms(1800);                                         // Calculate Irms4 only   
+        float Irms5 = emon5.calcIrms(1800);                                         // Calculate Irms5 only   
+        float Irms6 = emon6.calcIrms(1800);                                         // Calculate Irms6 only   
+        float Irms7 = emon7.calcIrms(1800);                                         // Calculate Irms7 only   
+        float Irms8 = emon8.calcIrms(1800);                                         // Calculate Irms8 only      
 
         // voltage0 measure
         adc0 = analogRead(A9);                                                      // Read adc
@@ -78,6 +85,11 @@ void loop() {
         ACVoltage2 = inputVoltage2 * (ACVoltageRefference/inputVoltageRefference);  // Formula comparison to measure AC Voltage (AC Voltage = ACVoltage/InputVoltage)
 
         // water pressure calculation
+        vadc = (analogRead(12) * 5.00) / 1023;                                      // Read adc
+        // wpress = avgGrad * (250*(V / 5) - 25) + c;                                   // Formula read pressure
+        if ( wpress < 0){                                                           // Decision pressure < 0
+            wpress = 0;                                                             // Default pressure = 0
+        }
 
         // output data for DEBUG and correction
         #ifdef DEBUG
@@ -104,7 +116,7 @@ void loop() {
         Serial.print("|inputVoltage2=");Serial.print(inputVoltage2);
         Serial.print("|ACVoltage2=");Serial.println(ACVoltage2);
         Serial.println("----------------------------------------------------------------------------------------");
-        Serial.print("WaterPressure=");Serial.println(Wpress);
+        Serial.print("WaterPressure=");Serial.println(wpress);
         Serial.println("----------------------------------------------------------------------------------------");
         #endif
 
@@ -123,7 +135,7 @@ void loop() {
         Serial1.print(adc0);Serial1.print(";");
         Serial1.print(adc1);Serial1.print(";");
         Serial1.print(adc2);Serial1.print(";");
-        Serial1.print(Wpress);Serial1.print(";");
+        Serial1.print(wpress);Serial1.print(";");
         Serial1.print("\n");
         #endif
     } else {
