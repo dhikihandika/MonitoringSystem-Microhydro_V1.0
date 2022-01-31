@@ -15,7 +15,7 @@ EnergyMonitor emon8;                            // Create an instance emon8
 
 void setup() {
     Serial.begin(9600);                         // Serial begin initialization
-    emon0.current(0, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
+    emon0.current(0, 66);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 47(ex resistor) = 66.
     emon1.current(1, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
     emon2.current(2, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
     emon3.current(3, 47);                       // Current: input pin, calibration. Cur Const= Ratio/BurdenR. 1800/62(in resistor) + 100(ex resistor) = 47.
